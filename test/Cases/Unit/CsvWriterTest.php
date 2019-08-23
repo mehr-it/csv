@@ -18,15 +18,15 @@
 			$wrt->open($res);
 
 
-			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4']);
-			$wrt->writeLine(['w1', 'w2', 'w3', 'w 4']);
+			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4', 'v"5']);
+			$wrt->writeLine(['w1', 'w2', 'w3', 'w 4', 'v""5']);
 
 			$wrt->detach();
 
 			fseek($res, 0);
 			$ret = stream_get_contents($res);
 
-			$this->assertSame("\"v1\"\"\",\"v,2\",v3,\"v 4\"\nw1,w2,w3,\"w 4\"\n", $ret);
+			$this->assertSame("\"v1\"\"\",\"v,2\",v3,\"v 4\",\"v\"\"5\"\nw1,w2,w3,\"w 4\",\"v\"\"\"\"5\"\n", $ret);
 
 		}
 
@@ -88,14 +88,14 @@
 			$wrt->open($res);
 
 
-			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4']);
+			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4', 'v""5']);
 
 			$wrt->detach();
 
 			fseek($res, 0);
 			$ret = stream_get_contents($res);
 
-			$this->assertSame("\"v1\\\"\",\"v,2\",v3,\"v 4\"\n", $ret);
+			$this->assertSame("\"v1\\\"\",\"v,2\",v3,\"v 4\",\"v\\\"\\\"5\"\n", $ret);
 
 		}
 
@@ -118,7 +118,7 @@
 			fseek($res, 0);
 			$ret = stream_get_contents($res);
 
-			$this->assertSame("'v1\"','v,2',v3,'v 4'\n", $ret);
+			$this->assertSame("'v1\"\"','v,2',v3,'v 4'\n", $ret);
 
 		}
 
@@ -188,6 +188,126 @@
 			$ret = stream_get_contents($res);
 
 			$this->assertSame(utf8_decode("äöü,xyz\n"), $ret);
+
+		}
+
+		public function testWriteByteOrderMark_utf8() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setOutputEncoding('UTF-8'));
+
+
+			$wrt->open($res);
+
+
+			$this->assertSame($wrt, $wrt->writeByteOrderMark());
+			$wrt->writeLine(['äöü', 'xyz']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("\xEF\xBB\xBF" . "äöü,xyz\n", $ret);
+
+		}
+
+		public function testWriteByteOrderMark_utf16le() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setOutputEncoding('UTF-16LE'));
+
+
+			$wrt->open($res);
+
+
+			$this->assertSame($wrt, $wrt->writeByteOrderMark());
+			$wrt->writeLine(['äöü', 'xyz']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("\xFF\xFE" . mb_convert_encoding("äöü,xyz\n", 'UTF-16LE', 'UTF-8' ), $ret);
+
+		}
+
+		public function testWriteByteOrderMark_utf16be() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setOutputEncoding('UTF-16BE'));
+
+
+			$wrt->open($res);
+
+
+			$this->assertSame($wrt, $wrt->writeByteOrderMark());
+			$wrt->writeLine(['äöü', 'xyz']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("\xFE\xFF" . mb_convert_encoding("äöü,xyz\n", 'UTF-16BE', 'UTF-8' ), $ret);
+
+		}
+
+		public function testWriteByteOrderMark_utf32le() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setOutputEncoding('UTF-32LE'));
+
+
+			$wrt->open($res);
+
+
+			$this->assertSame($wrt, $wrt->writeByteOrderMark());
+			$wrt->writeLine(['äöü', 'xyz']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("\xFF\xFE\x00\x00" . mb_convert_encoding("äöü,xyz\n", 'UTF-32LE', 'UTF-8'), $ret);
+
+		}
+
+		public function testWriteByteOrderMark_utf32be() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setOutputEncoding('UTF-32BE'));
+
+
+			$wrt->open($res);
+
+
+			$this->assertSame($wrt, $wrt->writeByteOrderMark());
+			$wrt->writeLine(['äöü', 'xyz']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("\x00\x00\xFE\xFF" . mb_convert_encoding("äöü,xyz\n", 'UTF-32BE', 'UTF-8'), $ret);
 
 		}
 

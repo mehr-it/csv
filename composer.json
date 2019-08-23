@@ -1,6 +1,6 @@
 {
   "name": "mehr-it/csv",
-  "description": "Advanced CSV writer",
+  "description": "Advanced CSV reader and writer for PHP",
   "license": "MIT",
   "authors": [
     {
@@ -20,7 +20,9 @@
   },
   "require": {
     "php": ">=7.1.0",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ext-iconv": "*",
+    "thecodingmachine/safe": "^0.1.16"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.4"
