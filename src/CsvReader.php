@@ -99,21 +99,24 @@
 
 		/**
 		 * Gets the enclosure char
-		 * @return string The enclosure char
+		 * @return string|null The enclosure char
 		 */
-		public function getEnclosure(): string {
+		public function getEnclosure(): ?string {
 			return $this->enclosure;
 		}
 
 		/**
 		 * Sets the enclosure char
-		 * @param string $enclosure The enclosure char
+		 * @param string|null $enclosure The enclosure char
 		 * @return CsvReader
 		 */
-		public function setEnclosure(string $enclosure): CsvReader {
+		public function setEnclosure(?string $enclosure): CsvReader {
 
 			if ($this->source)
 				throw new RuntimeException('Enclosure must be set before opening CSV');
+
+			if ($enclosure == '' || $enclosure === null)
+				$enclosure = null;
 
 			$this->enclosure = $enclosure;
 
@@ -195,6 +198,29 @@
 		 */
 		public function getColumns(): ?array {
 			return $this->columns;
+		}
+
+		/**
+		 * Checks if all given columns exist in the column list
+		 * @param string|string[] $columns The column name(s)
+		 * @return bool True if all given columns exist. Else false.
+		 */
+		public function columnsExist($columns) : bool {
+
+			if ($this->columns === null)
+				throw new RuntimeException('Columns must be read or set before using columnsExist()');
+
+			if (!is_array($columns))
+				$columns = [$columns];
+
+			// check if all passed columns exist
+			$existingColumnMap = array_fill_keys($this->columns, true);
+			foreach($columns as $curr) {
+				if (!($existingColumnMap[$curr] ?? false))
+					return false;
+			}
+
+			return true;
 		}
 
 		/**
@@ -398,7 +424,10 @@
 
 			// parse CSV
 			do {
-				$fields = fgetcsv($this->source, 0, $this->delimiter, $enclosure, $escape);
+				if ($enclosure === null)
+					$fields = explode($this->delimiter, rtrim(fgets($this->source), "\n\r"));
+				else
+					$fields = fgetcsv($this->source, 0, $this->delimiter, $enclosure, $escape);
 
 				if ($fields === false) {
 					// EOF or error?
@@ -412,7 +441,7 @@
 			while ($fields === [0 => null]); // skip empty lines
 
 			// unescape escape chars (str_getcsv does this only if escape matches enclosure)
-			if ($this->escape != $this->enclosure) {
+			if ($this->enclosure !== null && $this->escape != $this->enclosure) {
 
 				$enclosureReg = preg_quote($this->enclosure, '/');
 				$escape       = $this->escape;

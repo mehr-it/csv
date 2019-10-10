@@ -163,6 +163,25 @@
 
 		}
 
+		public function testReadLine_withoutEnclosure() {
+
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "v1\"\",'v,2',v3,\"v 4\n a,b, c, d, e");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$this->assertSame($rdr, $rdr->setEnclosure(''));
+			$this->assertSame($rdr, $rdr->setEscape(''));
+			$rdr->open($res);
+
+			$this->assertSame(['v1""', '\'v', '2\'', 'v3', '"v 4'], $rdr->readLine());
+			$this->assertSame([' a', 'b', ' c', ' d', ' e'], $rdr->readLine());
+
+			fclose($res);
+
+		}
+
 		public function testReadLine_inputEncoding() {
 
 			$res = fopen('php://memory', 'w');
@@ -381,6 +400,70 @@
 			$this->assertSame(['a1', 'b', 'c'], $rdr->getColumns());
 
 			$this->assertSame(['v1', 'v2', 'v3'], $rdr->readLine());
+
+			fclose($res);
+		}
+
+		public function testColumnsExist_single_existing() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\"a1\",b,c\nv1,v2,v3\n");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->readColumns());
+
+			$this->assertSame(true, $rdr->columnsExist('b'));
+
+			fclose($res);
+		}
+
+		public function testColumnsExist_single_notExisting() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\"a1\",b,c\nv1,v2,v3\n");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->readColumns());
+
+			$this->assertSame(false, $rdr->columnsExist('b2'));
+
+			fclose($res);
+		}
+
+		public function testColumnsExist_multiple_existing() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\"a1\",b,c\nv1,v2,v3\n");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->readColumns());
+
+			$this->assertSame(true, $rdr->columnsExist(['a1', 'b', 'c']));
+
+			fclose($res);
+		}
+
+		public function testColumnsExist_multiple_notExisting() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\"a1\",b,c\nv1,v2,v3\n");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->readColumns());
+
+			$this->assertSame(false, $rdr->columnsExist(['a1', 'b2', 'c']));
 
 			fclose($res);
 		}
