@@ -177,6 +177,7 @@
 
 			$this->assertSame(['v1""', '\'v', '2\'', 'v3', '"v 4'], $rdr->readLine());
 			$this->assertSame([' a', 'b', ' c', ' d', ' e'], $rdr->readLine());
+			$this->assertSame(false, $rdr->readLine());
 
 			fclose($res);
 

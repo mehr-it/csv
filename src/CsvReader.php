@@ -424,10 +424,16 @@
 
 			// parse CSV
 			do {
-				if ($enclosure === null)
-					$fields = explode($this->delimiter, rtrim(fgets($this->source), "\n\r"));
-				else
+				if ($enclosure === null) {
+					$lineStr = fgets($this->source);
+					if ($lineStr !== false)
+						$fields = explode($this->delimiter, rtrim($lineStr, "\n\r"));
+					else
+						$fields = false;
+				}
+				else {
 					$fields = fgetcsv($this->source, 0, $this->delimiter, $enclosure, $escape);
+				}
 
 				if ($fields === false) {
 					// EOF or error?
