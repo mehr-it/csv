@@ -199,6 +199,23 @@
 			fclose($res);
 		}
 
+		public function testReadLineBOM_disabled() {
+
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\xEF\xBB\xBFv1,\"v,2\",v3,\"v 4\",\"v\"\"5\"\nw1,w2,w3,\"w 4\",\"v\"\"\"\"5\"\n");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res, false);
+
+			$this->assertSame(["\xEF\xBB\xBFv1", 'v,2', 'v3', 'v 4', 'v"5'], $rdr->readLine());
+			$this->assertSame(['w1', 'w2', 'w3', 'w 4', 'v""5'], $rdr->readLine());
+
+			fclose($res);
+
+		}
+
 		public function testReadLineBOM_utf8() {
 
 			$res = fopen('php://memory', 'w');

@@ -260,10 +260,11 @@
 		/**
 		 * Opens CSV file for reading
 		 * @param string|resource $source The resource or an URI
+		 * @param bool $bomDetection Allows to deactivate BOM detection. This is useful when source does not contain BOM and does not support seeking.
 		 * @return CsvReader
-		 * @throws \Safe\Exceptions\FilesystemException
+		 * @throws FilesystemException
 		 */
-		public function open($source): CsvReader {
+		public function open($source, bool $bomDetection = true): CsvReader {
 
 			if (!is_resource($source))
 				$source = \Safe\fopen($source, 'r');
@@ -274,42 +275,44 @@
 			$readEncoding = $inputEncoding;
 
 			// remove byte order marks
-			if ($inputEncoding === 'UTF-8') {
-				if (\Safe\fread($this->source, 3) !== self::BOM_UTF_8)
-					\Safe\rewind($this->source);
-			}
-			elseif (in_array($inputEncoding, ['UTF-16', 'UTF-16BE', 'UTF-16LE'])) {
-				$start = \Safe\fread($this->source, 2);
+			if ($bomDetection) {
+				if ($inputEncoding === 'UTF-8') {
+					if (\Safe\fread($this->source, 3) !== self::BOM_UTF_8)
+						\Safe\rewind($this->source);
+				}
+				elseif (in_array($inputEncoding, ['UTF-16', 'UTF-16BE', 'UTF-16LE'])) {
+					$start = \Safe\fread($this->source, 2);
 
-				if ($start === self::BOM_UTF_16_BE) {
-					// specify more exact charset for reading
-					if ($readEncoding === 'UTF-16')
-						$readEncoding = 'UTF-16BE';
+					if ($start === self::BOM_UTF_16_BE) {
+						// specify more exact charset for reading
+						if ($readEncoding === 'UTF-16')
+							$readEncoding = 'UTF-16BE';
+					}
+					elseif ($start === self::BOM_UTF_16_LE) {
+						// specify more exact charset for reading
+						if ($readEncoding === 'UTF-16')
+							$readEncoding = 'UTF-16LE';
+					}
+					else {
+						\Safe\rewind($this->source);
+					}
 				}
-				elseif ($start === self::BOM_UTF_16_LE) {
-					// specify more exact charset for reading
-					if ($readEncoding === 'UTF-16')
-						$readEncoding = 'UTF-16LE';
-				}
-				else {
-					\Safe\rewind($this->source);
-				}
-			}
-			elseif (in_array($inputEncoding, ['UTF-32', 'UTF-32BE', 'UTF-32LE'])) {
-				$start = \Safe\fread($this->source, 4);
+				elseif (in_array($inputEncoding, ['UTF-32', 'UTF-32BE', 'UTF-32LE'])) {
+					$start = \Safe\fread($this->source, 4);
 
-				if ($start === self::BOM_UTF_32_BE) {
-					// specify more exact charset for reading
-					if ($readEncoding === 'UTF-32')
-						$readEncoding = 'UTF-32BE';
-				}
-				elseif ($start === self::BOM_UTF_32_LE) {
-					// specify more exact charset for reading
-					if ($readEncoding === 'UTF-32')
-						$readEncoding = 'UTF-32LE';
-				}
-				else {
-					\Safe\rewind($this->source);
+					if ($start === self::BOM_UTF_32_BE) {
+						// specify more exact charset for reading
+						if ($readEncoding === 'UTF-32')
+							$readEncoding = 'UTF-32BE';
+					}
+					elseif ($start === self::BOM_UTF_32_LE) {
+						// specify more exact charset for reading
+						if ($readEncoding === 'UTF-32')
+							$readEncoding = 'UTF-32LE';
+					}
+					else {
+						\Safe\rewind($this->source);
+					}
 				}
 			}
 
