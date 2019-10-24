@@ -122,6 +122,29 @@
 
 		}
 
+		public function testWriteLine_noEnclosure() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setEnclosure(''));
+
+
+			$wrt->open($res);
+
+
+			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("v1\",v,2,v3,v 4\n", $ret);
+
+		}
+
 		public function testWriteLine_alwaysQuote() {
 
 			$res = fopen('php://memory', 'w');

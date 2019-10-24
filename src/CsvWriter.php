@@ -111,21 +111,24 @@
 
 		/**
 		 * Gets the enclosure char
-		 * @return string The enclosure char
+		 * @return string|null The enclosure char
 		 */
-		public function getEnclosure(): string {
+		public function getEnclosure(): ?string {
 			return $this->enclosure;
 		}
 
 		/**
 		 * Sets the enclosure char
-		 * @param string $enclosure The enclosure char
+		 * @param string|null $enclosure The enclosure char
 		 * @return $this
 		 */
-		public function setEnclosure(string $enclosure): CsvWriter {
+		public function setEnclosure(?string $enclosure): CsvWriter {
 
 			if ($this->target)
 				throw new RuntimeException('Enclosure must be set before opening CSV');
+
+			if ($enclosure === '')
+				$enclosure = null;
 
 			$this->enclosure = $enclosure;
 
@@ -386,33 +389,41 @@
 
 
 			// prepare field values
-			$fields = array_map(function($value) use ($enclosure, $escape, $alwaysQuote, $enclosureReg, $escapeReg) {
+			if ($this->enclosure !== null) {
 
-				// escape the enclosure and the escape char, when occurring within value
-				$value = preg_replace_callback("/($enclosureReg|$escapeReg)/", function($matches) use ($escape) {
-					return  $escape . $matches[0];
-				}, $value);
+				$fields = array_map(function ($value) use ($enclosure, $escape, $alwaysQuote, $enclosureReg, $escapeReg) {
+
+					// escape the enclosure and the escape char, when occurring within value
+					$value = preg_replace_callback("/($enclosureReg|$escapeReg)/", function ($matches) use ($escape) {
+						return $escape . $matches[0];
+					}, $value);
 
 
+					if ($alwaysQuote)
+						$value = "$enclosure$value$enclosure";
+
+					return $value;
+				}, $fields);
+
+
+				// put to temporary memory resource
+				\Safe\fputcsv($memResource, $fields, $this->delimiter, $alwaysQuote ? $this->nullEnclosure : $enclosure, $escape);
+				$line = \Safe\stream_get_contents($memResource, -1, 0);
+				\Safe\ftruncate($memResource, 0);
+
+				// remove null-quotes set for always quote
 				if ($alwaysQuote)
-					$value = "$enclosure$value$enclosure";
+					$line = str_replace($this->nullEnclosure, '', $line);
 
-				return $value;
-			}, $fields);
+				// convert linebreak if necessary
+				if ($linebreak !== self::F_PUT_CSV_LINEBREAK)
+					$line = substr($line, 0, -self::F_PUT_CSV_LINEBREAK_LENGTH) . $linebreak;
+			}
+			else {
 
+				$line = implode($this->delimiter, $fields) . $linebreak;
+			}
 
-			// put to temporary memory resource
-			\Safe\fputcsv($memResource, $fields, $this->delimiter, $alwaysQuote ? $this->nullEnclosure : $enclosure, $escape);
-			$line = \Safe\stream_get_contents($memResource, -1, 0);
-			\Safe\ftruncate($memResource, 0);
-
-			// remove null-quotes set for always quote
-			if ($alwaysQuote)
-				$line = str_replace($this->nullEnclosure, '', $line);
-
-			// convert linebreak if necessary
-			if ($linebreak !== self::F_PUT_CSV_LINEBREAK)
-				$line = substr($line, 0, - self::F_PUT_CSV_LINEBREAK_LENGTH) . $linebreak;
 
 			// convert encoding
 			if ($inputEnc !== $outputEnc)
