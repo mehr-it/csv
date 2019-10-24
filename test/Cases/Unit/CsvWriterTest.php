@@ -30,6 +30,26 @@
 
 		}
 
+		public function testWriteLineWithNUllValues() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+			$wrt->open($res);
+
+
+			$wrt->writeLine([null, 'v1"', null, 'v,2', 'v3', 'v 4', 'v"5', null]);
+			$wrt->writeLine(['w1', 'w2', 'w3', 'w 4', 'v""5']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame(",\"v1\"\"\",,\"v,2\",v3,\"v 4\",\"v\"\"5\",\nw1,w2,w3,\"w 4\",\"v\"\"\"\"5\"\n", $ret);
+
+		}
+
 		public function testWriteLine_otherDelimiter() {
 
 			$res = fopen('php://memory', 'w');
@@ -142,6 +162,29 @@
 			$ret = stream_get_contents($res);
 
 			$this->assertSame("v1\",v,2,v3,v 4\n", $ret);
+
+		}
+
+		public function testWriteLine_noEnclosureWithNullValues() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setEnclosure(''));
+
+
+			$wrt->open($res);
+
+
+			$wrt->writeLine([null, 'v1"', null, 'v,2', 'v3', 'v 4', null]);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame(",v1\",,v,2,v3,v 4,\n", $ret);
 
 		}
 
@@ -376,6 +419,28 @@
 			$this->assertSame("Col1,Col2\n2,3\n", $ret);
 		}
 
+		public function testWriteData_numericKeysForHeaders() {
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+			$wrt->open($res);
+
+			$wrt->columns(['Col1', 'Col2'], true);
+
+
+			$this->assertSame($wrt, $wrt->writeData([
+				'Col1' => 2,
+				'Col2' => 3,
+			]));
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("Col1,Col2\n2,3\n", $ret);
+		}
+
 		public function testWriteData_withoutColumnHeaders() {
 			$res = fopen('php://memory', 'w');
 
@@ -422,6 +487,36 @@
 			$ret = stream_get_contents($res);
 
 			$this->assertSame("12,14,\n22,,26\n", $ret);
+		}
+
+		public function testWriteData_notWithNullValues() {
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+			$wrt->open($res);
+
+			$wrt->columns(['a' => 'Col1', 'b' => 'Col2', 'c' => 'Col3', 'd' => 'Col4'], false);
+
+
+			$this->assertSame($wrt, $wrt->writeData([
+				'a' => null,
+				'b' => 14,
+				'c' => null,
+				'd' => 15,
+			]));
+			$this->assertSame($wrt, $wrt->writeData([
+				'a' => null,
+				'b' => 24,
+				'c' => null,
+				'd' => 25,
+			]));
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame(",14,,15\n,24,,25\n", $ret);
 		}
 
 		public function testWriteData_unknownColumns() {

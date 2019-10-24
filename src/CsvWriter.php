@@ -281,7 +281,7 @@
 
 		/**
 		 * Sets the CSV columns. The column key must be passed as array key and is expected for writeData(). The column header must be passed as array value
-		 * @param array $columns The columns. Header as value. Column key as key
+		 * @param string[] $columns The columns. Header as value. Column key as key
 		 * @param bool $output True if to output the column headers
 		 * @return $this
 		 * @throws \Safe\Exceptions\FilesystemException
@@ -289,11 +289,16 @@
 		 */
 		public function columns(array $columns, $output = true) : CsvWriter {
 
-			$this->columns = $columns;
+			$cols = [];
+			foreach($columns as $key => $value) {
+				$cols[is_int($key) ? $value : $key] = $value;
+			}
+
+			$this->columns = $cols;
 
 			// output column headers
 			if ($output)
-				$this->writeLine($columns);
+				$this->writeLine($cols);
 
 			return $this;
 		}
