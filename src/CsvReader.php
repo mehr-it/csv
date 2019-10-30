@@ -256,6 +256,23 @@
 			return $this;
 		}
 
+		/**
+		 * Opens a string for reading CSV content from
+		 * @param string $content The CSV content
+		 * @param bool $bomDetection bool $bomDetection Allows to deactivate BOM detection. This is useful when source does not contain BOM and does not support seeking.
+		 * @param string $tempUri The URI for creating a temporary stream
+		 * @return CsvReader
+		 * @throws FilesystemException
+		 */
+		public function openString(string $content, bool $bomDetection = true, string $tempUri = 'php://memory') {
+
+			$resource = \Safe\fopen($tempUri, 'w+');
+			\Safe\fwrite($resource, $content);
+			\Safe\rewind($resource);
+
+			return $this->open($resource, $bomDetection);
+		}
+
 
 		/**
 		 * Opens CSV file for reading

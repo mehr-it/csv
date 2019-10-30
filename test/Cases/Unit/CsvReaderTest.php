@@ -8,6 +8,39 @@
 
 	class CsvReaderTest extends TestCase
 	{
+		public function testReadLine_openedFromString() {
+
+			$rdr = new CsvReader();
+			$rdr->openString("\"v1\"\"\",\"v,2\",v3,\"v 4\",\"v\"\"5\"\nw1,w2,w3,\"w 4\",\"v\"\"\"\"\n5\"\n");
+
+			$this->assertSame(['v1"', 'v,2', 'v3', 'v 4', 'v"5'], $rdr->readLine());
+			$this->assertSame(['w1', 'w2', 'w3', 'w 4', "v\"\"\n5"], $rdr->readLine());
+
+			$rdr->close();
+		}
+
+		public function testReadLine_openedFromString_withBOM() {
+
+			$rdr = new CsvReader();
+			$rdr->openString("\xEF\xBB\xBF\"v1\"\"\",\"v,2\",v3,\"v 4\",\"v\"\"5\"\nw1,w2,w3,\"w 4\",\"v\"\"\"\"5\"\n");
+
+			$this->assertSame(['v1"', 'v,2', 'v3', 'v 4', 'v"5'], $rdr->readLine());
+			$this->assertSame(['w1', 'w2', 'w3', 'w 4', "v\"\"5"], $rdr->readLine());
+
+			$rdr->close();
+		}
+
+		public function testReadLine_openedFromString_withBOMDisabled() {
+
+			$rdr = new CsvReader();
+			$rdr->openString("\xEF\xBB\xBFv1,\"v,2\",v3,\"v 4\",\"v\"\"5\"\nw1,w2,w3,\"w 4\",\"v\"\"\"\"5\"\n", false);
+
+			$this->assertSame(["\xEF\xBB\xBFv1", 'v,2', 'v3', 'v 4', 'v"5'], $rdr->readLine());
+			$this->assertSame(['w1', 'w2', 'w3', 'w 4', "v\"\"5"], $rdr->readLine());
+
+			$rdr->close();
+		}
+
 		public function testReadLine() {
 
 			$res = fopen('php://memory', 'w');
