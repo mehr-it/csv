@@ -6,6 +6,7 @@
 
 	use Closure;
 	use Generator;
+	use InvalidArgumentException;
 	use RuntimeException;
 	use Safe\Exceptions\FilesystemException;
 
@@ -283,8 +284,10 @@
 		 */
 		public function open($source, bool $bomDetection = true): CsvReader {
 
-			if (!is_resource($source))
+			if (is_string($source))
 				$source = \Safe\fopen($source, 'r');
+			elseif (!is_resource($source))
+				throw new InvalidArgumentException('Expected an URI or an open resource, got ' . (($type = gettype($source)) == 'object' ? get_class($source) : $type));
 
 			$this->source = $source;
 

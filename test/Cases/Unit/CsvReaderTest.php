@@ -4,10 +4,56 @@
 	namespace MehrItCsvTest\Cases\Unit;
 
 
+	use InvalidArgumentException;
 	use MehrIt\Csv\CsvReader;
 
 	class CsvReaderTest extends TestCase
 	{
+		public function testOpen_closedResource() {
+
+			$res = fopen('php://memory', 'w+');
+			fclose($res);
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvReader())
+				->open($res);
+
+		}
+
+		public function testOpen_stdClass() {
+
+			$res = new \stdClass();
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvReader())
+				->open($res);
+
+		}
+
+		public function testOpen_null() {
+
+			$res = null;
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvReader())
+				->open($res);
+
+		}
+
+		public function testOpen_integer() {
+
+			$res = 2;
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvReader())
+				->open($res);
+
+		}
+
 		public function testReadLine_openedFromString() {
 
 			$rdr = new CsvReader();

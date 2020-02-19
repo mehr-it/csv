@@ -238,8 +238,10 @@
 		 */
 		public function open($target) : CsvWriter {
 
-			if (!is_resource($target))
+			if (is_string($target))
 				$target = \Safe\fopen($target, 'w');
+			elseif (!is_resource($target))
+				throw new InvalidArgumentException('Expected an URI or an open resource, got ' . (($type = gettype($target)) == 'object' ? get_class($target) : $type));
 
 			$this->target         = $target;
 			$this->memResource    = \Safe\fopen('php://memory', 'w+');

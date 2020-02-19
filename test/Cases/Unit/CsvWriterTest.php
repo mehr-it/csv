@@ -541,10 +541,79 @@
 				->setEnclosure("'")
 				->setEscape('\\')
 				->setAlwaysQuote(true)
-				->open($resource)
+				->open($res)
 				->writeLine(['a', 'b', 'c'])
 				->close();
 
+
+		}
+
+		public function testOpenString() {
+
+			$file = tempnam(sys_get_temp_dir(), 'MehrItCsvUnitTest_');
+
+			try {
+				$wrt = new CsvWriter();
+				$wrt->open($file);
+
+
+				$wrt->writeLine(['v1', 'v2',]);
+
+				$wrt->detach();
+
+				$ret = file_get_contents($file);
+
+				$this->assertSame("v1,v2\n", $ret);
+			}
+			finally {
+				if (file_exists($file))
+					\Safe\unlink($file);
+			}
+
+		}
+
+		public function testOpen_closedResource() {
+
+			$res = fopen('php://memory', 'w+');
+			fclose($res);
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvWriter())
+				->open($res);
+
+		}
+
+		public function testOpen_stdClass() {
+
+			$res = new \stdClass();
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvWriter())
+				->open($res);
+
+		}
+
+		public function testOpen_null() {
+
+			$res = null;
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvWriter())
+				->open($res);
+
+		}
+
+		public function testOpen_integer() {
+
+			$res = 2;
+
+			$this->expectException(InvalidArgumentException::class);
+
+			(new CsvWriter())
+				->open($res);
 
 		}
 
