@@ -50,6 +50,10 @@
 
 		protected $anyDataWritten = false;
 
+		protected $enclosureReg = null;
+
+		protected $escapeReg = null;
+
 		/**
 		 * @var string[]|bool
 		 */
@@ -131,6 +135,7 @@
 				$enclosure = null;
 
 			$this->enclosure = $enclosure;
+			$this->enclosureReg = null;
 
 			return $this;
 		}
@@ -178,7 +183,8 @@
 			if ($this->target)
 				throw new RuntimeException('Escape must be set before opening CSV');
 
-			$this->escape = $escape;
+			$this->escape    = $escape;
+			$this->escapeReg = null;
 
 			return $this;
 		}
@@ -384,18 +390,19 @@
 				throw new RuntimeException('No target opened');
 
 			$enclosure    = $this->enclosure;
-			$enclosureReg = preg_quote($this->enclosure, '/');
-			$escape       = $this->escape;
-			$escapeReg    = preg_quote($this->escape, '/');
-			$alwaysQuote  = $this->alwaysQuote;
 			$linebreak    = $this->linebreak;
 			$inputEnc     = $this->inputEncoding;
 			$outputEnc    = $this->outputEncoding;
 
 			// prepare field values
-			if ($this->enclosure !== null) {
+			if ($enclosure !== null) {
 
-				$memResource = ($this->memResource ?: $this->memResource = \Safe\fopen('php://memory', 'w+'));
+				$enclosureReg = ($this->enclosureReg ?: $this->enclosureReg = preg_quote($this->enclosure, '/'));
+				$escapeReg    = ($this->escapeReg ?: $this->escapeReg = preg_quote($this->escape, '/'));
+				$escape       = $this->escape;
+			    $alwaysQuote  = $this->alwaysQuote;
+
+				$memResource  = ($this->memResource ?: $this->memResource = \Safe\fopen('php://memory', 'w+'));
 
 				$fields = array_map(function ($value) use ($enclosure, $escape, $alwaysQuote, $enclosureReg, $escapeReg) {
 
