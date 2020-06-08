@@ -244,7 +244,6 @@
 				throw new InvalidArgumentException('Expected an URI or an open resource, got ' . (($type = gettype($target)) == 'object' ? get_class($target) : $type));
 
 			$this->target         = $target;
-			$this->memResource    = \Safe\fopen('php://memory', 'w+');
 			$this->anyDataWritten = false;
 
 			return $this;
@@ -257,9 +256,10 @@
 		 */
 		public function detach() : CsvWriter {
 
-			\Safe\fclose($this->memResource);
+			if (is_resource($this->memResource))
+				\Safe\fclose($this->memResource);
 
-			$this->target = null;
+			$this->target      = null;
 			$this->memResource = null;
 
 			return $this;
@@ -392,11 +392,10 @@
 			$inputEnc     = $this->inputEncoding;
 			$outputEnc    = $this->outputEncoding;
 
-			$memResource = $this->memResource;
-
-
 			// prepare field values
 			if ($this->enclosure !== null) {
+
+				$memResource = ($this->memResource ?: $this->memResource = \Safe\fopen('php://memory', 'w+'));
 
 				$fields = array_map(function ($value) use ($enclosure, $escape, $alwaysQuote, $enclosureReg, $escapeReg) {
 
@@ -417,6 +416,8 @@
 				\Safe\fputcsv($memResource, $fields, $this->delimiter, $alwaysQuote ? $this->nullEnclosure : $enclosure, $escape);
 				$line = \Safe\stream_get_contents($memResource, -1, 0);
 				\Safe\ftruncate($memResource, 0);
+				\Safe\rewind($memResource);
+
 
 				// remove null-quotes set for always quote
 				if ($alwaysQuote)
