@@ -30,7 +30,7 @@
 
 		}
 
-		public function testWriteLineWithNUllValues() {
+		public function testWriteLineWithNullValues() {
 
 			$res = fopen('php://memory', 'w');
 
@@ -119,6 +119,53 @@
 
 		}
 
+		public function testWriteLine_noEscape() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setEscape(''));
+
+
+			$wrt->open($res);
+
+
+			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4', 'v""5']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("\"v1\",\"v,2\",v3,\"v 4\",\"v5\"\n", $ret);
+
+		}
+
+		public function testWriteLine_noEscapeCustomReplace() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setEscape(''));
+			$this->assertSame($wrt, $wrt->setIllegalCharReplace('+'));
+
+
+			$wrt->open($res);
+
+
+			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4', 'v""5']);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("\"v1+\",\"v,2\",v3,\"v 4\",\"v++5\"\n", $ret);
+
+		}
+
 		public function testWriteLine_otherEnclosure() {
 
 			$res = fopen('php://memory', 'w');
@@ -154,14 +201,39 @@
 			$wrt->open($res);
 
 
-			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4']);
+			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4', "g\r\n5"]);
 
 			$wrt->detach();
 
 			fseek($res, 0);
 			$ret = stream_get_contents($res);
 
-			$this->assertSame("v1\",v,2,v3,v 4\n", $ret);
+			$this->assertSame("v1\",v2,v3,v 4,g5\n", $ret);
+
+		}
+
+		public function testWriteLine_noEnclosureCustomReplace() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setEnclosure(''));
+			$this->assertSame($wrt, $wrt->setIllegalCharReplace('+'));
+
+
+
+			$wrt->open($res);
+
+
+			$wrt->writeLine(['v1"', 'v,2', 'v3', 'v 4', "g\r\n5"]);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame("v1\",v+2,v3,v 4,g++5\n", $ret);
 
 		}
 
@@ -184,7 +256,31 @@
 			fseek($res, 0);
 			$ret = stream_get_contents($res);
 
-			$this->assertSame(",v1\",,v,2,v3,v 4,\n", $ret);
+			$this->assertSame(",v1\",,v2,v3,v 4,\n", $ret);
+
+		}
+
+		public function testWriteLine_noEnclosureWithNullValuesCustomReplace() {
+
+			$res = fopen('php://memory', 'w');
+
+			$wrt = new CsvWriter();
+
+			$this->assertSame($wrt, $wrt->setEnclosure(''));
+			$this->assertSame($wrt, $wrt->setIllegalCharReplace('+'));
+
+
+			$wrt->open($res);
+
+
+			$wrt->writeLine([null, 'v1"', null, 'v,2', 'v3', 'v 4', null]);
+
+			$wrt->detach();
+
+			fseek($res, 0);
+			$ret = stream_get_contents($res);
+
+			$this->assertSame(",v1\",,v+2,v3,v 4,\n", $ret);
 
 		}
 

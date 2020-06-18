@@ -9,10 +9,6 @@
 
 	class CsvWriter
 	{
-
-		const F_PUT_CSV_LINEBREAK = "\n";
-		const F_PUT_CSV_LINEBREAK_LENGTH = 1;
-
 		const BOM_UTF_8 = "\xEF\xBB\xBF";
 		const BOM_UTF_16_BE = "\xFE\xFF";
 		const BOM_UTF_16_LE = "\xFF\xFE";
@@ -29,8 +25,6 @@
 		 * @var resource
 		 */
 		protected $filter;
-
-		protected $memResource;
 
 		protected $delimiter = ',';
 
@@ -50,9 +44,11 @@
 
 		protected $anyDataWritten = false;
 
-		protected $enclosureReg = null;
+		protected $_replaceReg;
 
-		protected $escapeReg = null;
+		protected $_specialChars;
+
+		protected $illegalCharReplace = '';
 
 		/**
 		 * @var string[]|bool
@@ -163,6 +159,27 @@
 			return $this;
 		}
 
+		/**
+		 * Gets the replace for illegal characters which have to be removed. This might be necessary if not using an enclosure or an escape.
+		 * @return string The replace for illegal characters which have to be removed. This might be necessary if not using an enclosure or an escape.
+		 */
+		public function getIllegalCharReplace(): string {
+			return $this->illegalCharReplace;
+		}
+
+		/**
+		 * Sets the replace for illegal characters which have to be removed. This might be necessary if not using an enclosure or an escape.
+		 * @param string $illegalCharReplace The replace for illegal characters which have to be removed. This might be necessary if not using an enclosure or an escape.
+		 * @return CsvWriter
+		 */
+		public function setIllegalCharReplace(string $illegalCharReplace): CsvWriter {
+			$this->illegalCharReplace = $illegalCharReplace;
+
+			return $this;
+		}
+
+
+
 
 
 		/**
@@ -252,6 +269,8 @@
 			$this->target         = $target;
 			$this->anyDataWritten = false;
 
+			$this->resetCache();
+
 			return $this;
 		}
 
@@ -262,11 +281,7 @@
 		 */
 		public function detach() : CsvWriter {
 
-			if (is_resource($this->memResource))
-				\Safe\fclose($this->memResource);
-
-			$this->target      = null;
-			$this->memResource = null;
+			$this->target = null;
 
 			return $this;
 		}
@@ -286,6 +301,7 @@
 
 			return $this;
 		}
+
 
 		/**
 		 * Sets the CSV columns. The column key must be passed as array key and is expected for writeData(). The column header must be passed as array value
@@ -376,7 +392,6 @@
 			return $this->writeLine($fields);
 		}
 
-
 		/**
 		 * Writes a new line using the given field values
 		 * @param array $fields The field values
@@ -389,60 +404,67 @@
 			if (!is_resource($this->target))
 				throw new RuntimeException('No target opened');
 
-			$enclosure    = $this->enclosure;
-			$linebreak    = $this->linebreak;
-			$inputEnc     = $this->inputEncoding;
-			$outputEnc    = $this->outputEncoding;
+			// import class variables
+			$enclosure   = $this->enclosure;
+			$alwaysQuote = $this->alwaysQuote;
+			$escape      = $this->escape;
+			$delimiter   = $this->delimiter;
 
-			// prepare field values
+
+			$replaceReg = null;
 			if ($enclosure !== null) {
+				$enclosureReg = preg_quote($enclosure, '/');
+				$escapeReg = preg_quote($escape, '/');
 
-				$enclosureReg = ($this->enclosureReg ?: $this->enclosureReg = preg_quote($this->enclosure, '/'));
-				$escapeReg    = ($this->escapeReg ?: $this->escapeReg = preg_quote($this->escape, '/'));
-				$escape       = $this->escape;
-			    $alwaysQuote  = $this->alwaysQuote;
+				$replaceReg = ($this->_replaceReg ?: $this->_replaceReg = $enclosureReg . ($escapeReg ? "|$escapeReg" : ''));
 
-				$memResource  = ($this->memResource ?: $this->memResource = \Safe\fopen('php://memory', 'w+'));
-
-				$fields = array_map(function ($value) use ($enclosure, $escape, $alwaysQuote, $enclosureReg, $escapeReg) {
-
-					// escape the enclosure and the escape char, when occurring within value
-					$value = preg_replace_callback("/($enclosureReg|$escapeReg)/", function ($matches) use ($escape) {
-						return $escape . $matches[0];
-					}, $value);
-
-
-					if ($alwaysQuote)
-						$value = "$enclosure$value$enclosure";
-
-					return $value;
-				}, $fields);
-
-
-				// put to temporary memory resource
-				\Safe\fputcsv($memResource, $fields, $this->delimiter, $alwaysQuote ? $this->nullEnclosure : $enclosure, $escape);
-				$line = \Safe\stream_get_contents($memResource, -1, 0);
-				\Safe\ftruncate($memResource, 0);
-				\Safe\rewind($memResource);
-
-
-				// remove null-quotes set for always quote
-				if ($alwaysQuote)
-					$line = str_replace($this->nullEnclosure, '', $line);
-
-				// convert linebreak if necessary
-				if ($linebreak !== self::F_PUT_CSV_LINEBREAK)
-					$line = substr($line, 0, -self::F_PUT_CSV_LINEBREAK_LENGTH) . $linebreak;
+				$specialChars = ($this->_specialChars ?: $this->_specialChars = array_filter([$enclosure, $enclosure !== null ? $escape : null, $delimiter, ' ', "\r", "\n"], function ($v) {
+					return $v !== '' && $v !== null;
+				}));
 			}
 			else {
-
-				$line = implode($this->delimiter, $fields) . $linebreak;
+				$specialChars = ($this->_specialChars ?: $this->_specialChars = [$delimiter, "\r", "\n"]);
 			}
+
+
+			$line = implode($delimiter, array_map(function($value) use ($specialChars, $enclosure, $escape, $alwaysQuote, $replaceReg) {
+
+				if ($enclosure !== null) {
+
+					// check if enclosure is needed
+					$needsEnclosure = $alwaysQuote;
+					if (!$alwaysQuote) {
+						foreach ($specialChars as $currChar) {
+							if (strpos($value, $currChar) !== false) {
+								$needsEnclosure = true;
+								break;
+							}
+						}
+					}
+
+					if ($needsEnclosure) {
+						// escape the enclosure and the escape char, when occurring within value
+						$value = preg_replace_callback("/($replaceReg)/", function ($matches) use ($escape) {
+							return $escape !== '' ? $escape . $matches[0] : $this->illegalCharReplace;
+						}, $value);
+
+						return "$enclosure$value$enclosure";
+					}
+
+				}
+				else {
+					$value = str_replace($specialChars, $this->illegalCharReplace, $value);
+				}
+
+				return $value;
+
+			}, $fields)) . $this->linebreak;
+
 
 
 			// convert encoding
-			if ($inputEnc !== $outputEnc)
-				$line = mb_convert_encoding($line, $outputEnc, $inputEnc);
+			if ($this->inputEncoding !== $this->outputEncoding)
+				$line = mb_convert_encoding($line, $this->outputEncoding, $this->inputEncoding);
 
 			\Safe\fwrite($this->target, $line);
 
@@ -451,6 +473,12 @@
 			return $this;
 		}
 
-
+		/**
+		 * Resets any cached values
+		 */
+		protected function resetCache() {
+			$this->_replaceReg   = null;
+			$this->_specialChars = null;
+		}
 
 	}
