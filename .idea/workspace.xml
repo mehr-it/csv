@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="09557f92-4bbf-4bfc-ba9f-af9ced95efd5" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/phpunit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="ComposerSettings" doNotAsk="true">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="PUSH_TAGS">
+      <GitPushTagMode />
+    </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="Homestead - Mehr CSV">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-token-stream" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/vendor/thecodingmachine/safe" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1PmOE2UfCbT7LqBmWiUPrM8zdsR" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="com.jetbrains.php.lang.actions.generation.PhpGenerateFieldAccessorHandlerBase$MyMemberChooser.fluent.setters.last.selected" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/phpunit.xml" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="application.passwordSafe" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RunManager" selected="Multirun.All">
+    <configuration name="All" type="Multirun" factoryName="Multirun" separateTabs="false" reuseTabsWithFailures="true" startOneByOne="true" markFailedProcess="true" hideSuccessProcess="false" delayTime="0.0">
+      <runConfiguration name="All - PHP 7.3" type="PHPUnit" />
+      <runConfiguration name="All - PHP 7.4" type="PHPUnit" />
+      <runConfiguration name="All - PHP 8.0" type="PHPUnit" />
+      <method v="2" />
+    </configuration>
+    <configuration name="All - PHP 7.3" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <CommandLine>
+        <PhpTestInterpreterSettings>
+          <option name="interpreterName" value="Homestead PHP 7.3" />
+        </PhpTestInterpreterSettings>
+      </CommandLine>
+      <TestRunner configuration_file="$PROJECT_DIR$/phpunit.xml" directory="$PROJECT_DIR$/test/Cases/Unit" use_alternative_configuration_file="true" />
+      <method v="2" />
+    </configuration>
+    <configuration name="All - PHP 7.4" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <CommandLine>
+        <PhpTestInterpreterSettings>
+          <option name="interpreterName" value="Homestead PHP 7.4" />
+        </PhpTestInterpreterSettings>
+      </CommandLine>
+      <TestRunner configuration_file="$PROJECT_DIR$/phpunit.xml" directory="$PROJECT_DIR$/test/Cases/Unit" use_alternative_configuration_file="true" />
+      <method v="2" />
+    </configuration>
+    <configuration name="All - PHP 8.0" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <CommandLine>
+        <PhpTestInterpreterSettings>
+          <option name="interpreterName" value="Homestead PHP 8.0" />
+        </PhpTestInterpreterSettings>
+      </CommandLine>
+      <TestRunner configuration_file="$PROJECT_DIR$/phpunit.xml" directory="$PROJECT_DIR$/test/Cases/Unit" use_alternative_configuration_file="true" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <CommandLine>
+        <PhpTestInterpreterSettings>
+          <option name="interpreterName" value="Homestead PHP 8.0" />
+        </PhpTestInterpreterSettings>
+      </CommandLine>
+      <TestRunner configuration_file="$PROJECT_DIR$/phpunit.xml" directory="$PROJECT_DIR$/test/Cases/Unit" use_alternative_configuration_file="true" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Multirun.All" />
+      <item itemvalue="PHPUnit.All - PHP 7.3" />
+      <item itemvalue="PHPUnit.All - PHP 7.4" />
+      <item itemvalue="PHPUnit.All - PHP 8.0" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="09557f92-4bbf-4bfc-ba9f-af9ced95efd5" name="Default Changelist" comment="" />
+      <created>1554724140233</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1554724140233</updated>
+      <workItem from="1554724141355" duration="15383000" />
+      <workItem from="1554794343450" duration="598000" />
+      <workItem from="1555053751018" duration="599000" />
+      <workItem from="1555315092636" duration="1199000" />
+      <workItem from="1556088500728" duration="11000" />
+      <workItem from="1566475690993" duration="41846000" />
+      <workItem from="1568584371950" duration="68000" />
+      <workItem from="1570712435293" duration="3221000" />
+      <workItem from="1571124991947" duration="37000" />
+      <workItem from="1571739712175" duration="2160000" />
+      <workItem from="1571903791544" duration="5035000" />
+      <workItem from="1572452188558" duration="1628000" />
+      <workItem from="1573464331118" duration="2427000" />
+      <workItem from="1574721239203" duration="7000" />
+      <workItem from="1579515916830" duration="3189000" />
+      <workItem from="1582098889737" duration="2625000" />
+      <workItem from="1582291716274" duration="67000" />
+      <workItem from="1589975355664" duration="619000" />
+      <workItem from="1590436644192" duration="1330000" />
+      <workItem from="1590650208817" duration="3000" />
+      <workItem from="1591653685418" duration="10513000" />
+      <workItem from="1592485687003" duration="1423000" />
+      <workItem from="1592487201702" duration="1484000" />
+      <workItem from="1592811137133" duration="603000" />
+      <workItem from="1593367389336" duration="1224000" />
+      <workItem from="1593602316796" duration="1197000" />
+      <workItem from="1593815918929" duration="596000" />
+      <workItem from="1594061685860" duration="598000" />
+      <workItem from="1594497311228" duration="1866000" />
+      <workItem from="1595249315283" duration="32000" />
+      <workItem from="1607589568312" duration="236000" />
+    </task>
+    <task id="LOCAL-00001" summary="initial commit">
+      <created>1554741236685</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1554741236685</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Implemented CSV reader and improved charset support">
+      <created>1566558521035</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1566558521035</updated>
+    </task>
+    <task id="LOCAL-00003" summary="* Added ability to check if columns exist&#10;* Added support for reading CSVs without enclosures">
+      <created>1570714088135</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1570714088135</updated>
+    </task>
+    <task id="LOCAL-00004" summary="FIX: reading file without enclosures never detected end of file">
+      <created>1570715594018</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1570715594018</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added ability do disable BOM detection (which avoids seek operations when no BOM is present)">
+      <created>1571740218089</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1571740218089</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Allow to write CSVs without enclosures">
+      <created>1571925308279</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1571925308279</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Allow writer columns to be set with numeric keys">
+      <created>1571927187464</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1571927187464</updated>
+    </task>
+    <task id="LOCAL-00008" summary="added the ability to read CSV from strings">
+      <created>1572453173516</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1572453173516</updated>
+    </task>
+    <task id="LOCAL-00009" summary="throw correct error if trying to open invalid target">
+      <created>1582101480186</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1582101480186</updated>
+    </task>
+    <task id="LOCAL-00010" summary="only create memory stream when really needed and use rewind after truncate to avoid unnecessary resource consumption">
+      <created>1591654185721</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1591654185721</updated>
+    </task>
+    <task id="LOCAL-00011" summary="small performance improvements">
+      <created>1591655046348</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1591655046348</updated>
+    </task>
+    <task id="LOCAL-00012" summary="do not use fputcsv() anymore but build CSV lines on our own to support writing without enclosures and escapes better">
+      <created>1592488051443</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1592488051443</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="initial commit" />
+    <MESSAGE value="Implemented CSV reader and improved charset support" />
+    <MESSAGE value="* Added ability to check if columns exist&#10;* Added support for reading CSVs without enclosures" />
+    <MESSAGE value="FIX: reading file without enclosures never detected end of file" />
+    <MESSAGE value="added ability do disable BOM detection (which avoids seek operations when no BOM is present)" />
+    <MESSAGE value="Allow to write CSVs without enclosures" />
+    <MESSAGE value="Allow writer columns to be set with numeric keys" />
+    <MESSAGE value="added the ability to read CSV from strings" />
+    <MESSAGE value="throw correct error if trying to open invalid target" />
+    <MESSAGE value="only create memory stream when really needed and use rewind after truncate to avoid unnecessary resource consumption" />
+    <MESSAGE value="small performance improvements" />
+    <MESSAGE value="do not use fputcsv() anymore but build CSV lines on our own to support writing without enclosures and escapes better" />
+    <option name="LAST_COMMIT_MESSAGE" value="do not use fputcsv() anymore but build CSV lines on our own to support writing without enclosures and escapes better" />
+  </component>
+</project>
