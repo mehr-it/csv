@@ -172,13 +172,17 @@
 
 		/**
 		 * Converts the given value to a number
-		 * @param string $value The value
+		 * @param string|null $value The value
 		 * @param string|null $decimalSeparator The decimal separator to use for parsing (must be UTF-8 encoded). If empty, the default decimal separator is used
+		 * @param string|null $thousandsSeparator The thousands separator to remove
 		 * @return string|null The number as string (BCMath compatible) or null if value cannot be converted to a number
 		 */
-		protected function convertNumber(?string $value, string $decimalSeparator = null): ?string {
+		protected function convertNumber(?string $value, string $decimalSeparator = null, string $thousandsSeparator = null): ?string {
 			$value = trim($value);
 
+			if ($thousandsSeparator)
+				$value = str_replace($thousandsSeparator, '', $value);
+			
 			$ds        = trim($decimalSeparator) !== '' ? $decimalSeparator : $this->defaultDecimalSeparator;
 			$dsEscaped = preg_quote($ds, '/');
 
@@ -194,15 +198,16 @@
 
 		/**
 		 * Converts the given value to a number and strips off any decimals
-		 * @param string $value The value
+		 * @param string|null $value The value
 		 * @param string|null $decimalSeparator The decimal separator to use for parsing (must be UTF-8 encoded). If empty, the default decimal separator is used
+		 * @param string|null $thousandsSeparator The thousands separator to remove
 		 * @return string|null The number as string (BCMath compatible) or null if value cannot be converted to a number
 		 */
-		protected function convertInt(?string $value, string $decimalSeparator = null) {
+		protected function convertInt(?string $value, string $decimalSeparator = null, string $thousandsSeparator = null) {
 
-			$value = $this->convertNumber($value, $decimalSeparator);
+			$value = $this->convertNumber($value, $decimalSeparator, $thousandsSeparator);
 
-			if (($pos = mb_strpos($value, '.', 0, $this->outputEncoding)) !== false)
+			if (mb_strpos($value, '.', 0, $this->outputEncoding) !== false)
 				return null;
 
 			return $value;

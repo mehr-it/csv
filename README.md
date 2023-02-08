@@ -71,14 +71,15 @@ Following example demonstrates the usage of casts, for easy reading data types:
      $reader = new CsvReader();
      $row = $reader
          ->open($resource)
-         ->setColumns(['a', 'b', 'c', 'd'])
+         ->setColumns(['a', 'b', 'c', 'd', 'e'])
          ->setCasts(
             'a' => 'number',
             'b' => 'json',
             'c' => 'split:|'
             'd' => function($v) {
                 return 'x-' . $v;
-            }
+            },
+            'e' => 'number:,:.',
          );
          ->readData();
          

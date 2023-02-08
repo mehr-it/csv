@@ -812,6 +812,31 @@
 
 			fclose($res);
 		}
+		
+		public function testReadData_castNumber_withThousandsSeparator() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\" 1.245,8 \";ab\ncd;\"EF \"\n12;b\n-1,789;c\n,0;d");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$this->assertSame($rdr, $rdr->setDelimiter(';'));
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->setColumns(['a', 'b']));
+			$this->assertSame($rdr, $rdr->setDefaultDecimalSeparator(','));
+			$this->assertSame($rdr, $rdr->setCasts(['a' => 'number:,:.']));
+
+
+			$this->assertSame(['a' => '1245.8', 'b' => 'ab'], $rdr->readData());
+			$this->assertSame(['a' => null, 'b' => 'EF '], $rdr->readData());
+			$this->assertSame(['a' => '12', 'b' => 'b'], $rdr->readData());
+			$this->assertSame(['a' => '-1.789', 'b' => 'c'], $rdr->readData());
+			$this->assertSame(['a' => '.0', 'b' => 'd'], $rdr->readData());
+
+
+			fclose($res);
+		}
 
 		public function testReadData_castInt() {
 			$res = fopen('php://memory', 'w');
@@ -827,6 +852,30 @@
 
 
 			$this->assertSame(['a' => '45', 'b' => 'ab'], $rdr->readData());
+			$this->assertSame(['a' => null, 'b' => 'EF '], $rdr->readData());
+			$this->assertSame(['a' => '12', 'b' => 'b'], $rdr->readData());
+			$this->assertSame(['a' => null, 'b' => 'c'], $rdr->readData());
+			$this->assertSame(['a' => null, 'b' => 'd'], $rdr->readData());
+			$this->assertSame(['a' => '-4', 'b' => 'e'], $rdr->readData());
+
+
+			fclose($res);
+		}
+		
+		public function testReadData_castInt_withThousandsSeparator() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\" 1,245 \",ab\ncd,\"EF \"\n12,b\n-1.789,c\n.0,d\n-4,e");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->setColumns(['a', 'b']));
+			$this->assertSame($rdr, $rdr->setCasts(['a' => 'int:.:,']));
+
+
+			$this->assertSame(['a' => '1245', 'b' => 'ab'], $rdr->readData());
 			$this->assertSame(['a' => null, 'b' => 'EF '], $rdr->readData());
 			$this->assertSame(['a' => '12', 'b' => 'b'], $rdr->readData());
 			$this->assertSame(['a' => null, 'b' => 'c'], $rdr->readData());
