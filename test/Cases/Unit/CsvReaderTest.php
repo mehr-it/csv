@@ -660,6 +660,27 @@
 
 			fclose($res);
 		}
+		
+		public function testReadData_castDefaultNullFromBoolean() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "\" \",1\n0,\" \"\n1,\" \"");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->setColumns(['a', 'b']));
+			$this->assertSame($rdr, $rdr->setCasts(['a' => 'bool|defaultNull']));
+
+
+			$this->assertSame(['a' => false, 'b' => '1'], $rdr->readData());
+			$this->assertSame(['a' => false, 'b' => ' '], $rdr->readData());
+			$this->assertSame(['a' => true, 'b' => ' '], $rdr->readData());
+
+
+			fclose($res);
+		}
 
 		public function testReadData_castDefault() {
 			$res = fopen('php://memory', 'w');
@@ -754,6 +775,31 @@
 			$this->assertSame($rdr, $rdr->setCasts(['a' => 'bool']));
 
 
+			$this->assertSame(['a' => false, 'b' => '1'], $rdr->readData());
+			$this->assertSame(['a' => false, 'b' => 'true'], $rdr->readData());
+			$this->assertSame(['a' => false, 'b' => '5'], $rdr->readData());
+			$this->assertSame(['a' => false, 'b' => '6'], $rdr->readData());
+			$this->assertSame(['a' => true, 'b' => '8'], $rdr->readData());
+			$this->assertSame(['a' => false, 'b' => '10'], $rdr->readData());
+
+
+			fclose($res);
+		}
+		
+		public function testReadData_castBoolFromDefaultNull() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, ",\n\" false \",1\n\" \",\"true\"\nFALSE,5\n0,6\n1,8\n,10");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->setColumns(['a', 'b']));
+			$this->assertSame($rdr, $rdr->setCasts(['a' => 'defaultNull|bool']));
+
+
+			$this->assertSame(['a' => false, 'b' => ''], $rdr->readData());
 			$this->assertSame(['a' => false, 'b' => '1'], $rdr->readData());
 			$this->assertSame(['a' => false, 'b' => 'true'], $rdr->readData());
 			$this->assertSame(['a' => false, 'b' => '5'], $rdr->readData());
@@ -912,7 +958,7 @@
 		public function testReadData_castSplit() {
 			$res = fopen('php://memory', 'w');
 
-			fwrite($res, "1|2|3|X,b\n|,c\n1,d\n,e");
+			fwrite($res, "1|2|3|x,b\n|,c\n1,d\n,e");
 			rewind($res);
 
 			$rdr = new CsvReader();
@@ -920,6 +966,28 @@
 
 			$this->assertSame($rdr, $rdr->setColumns(['a', 'b']));
 			$this->assertSame($rdr, $rdr->setCasts(['a' => 'split']));
+
+
+			$this->assertSame(['a' => ['1', '2', '3', 'x'], 'b' => 'b'], $rdr->readData());
+			$this->assertSame(['a' => ['', ''], 'b' => 'c'], $rdr->readData());
+			$this->assertSame(['a' => ['1'], 'b' => 'd'], $rdr->readData());
+			$this->assertSame(['a' => null, 'b' => 'e'], $rdr->readData());
+
+
+			fclose($res);
+		}
+		
+		public function testReadData_castSplit_upper() {
+			$res = fopen('php://memory', 'w');
+
+			fwrite($res, "1|2|3|X,b\n|,c\n1,d\n,e");
+			rewind($res);
+
+			$rdr = new CsvReader();
+			$rdr->open($res);
+
+			$this->assertSame($rdr, $rdr->setColumns(['a', 'b']));
+			$this->assertSame($rdr, $rdr->setCasts(['a' => 'split|upper']));
 
 
 			$this->assertSame(['a' => ['1', '2', '3', 'X'], 'b' => 'b'], $rdr->readData());

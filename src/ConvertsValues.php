@@ -45,15 +45,15 @@
 
 		/**
 		 * Converts the given value using given converter(s)
-		 * @param string|null|array $value The value
+		 * @param mixed $value The value
 		 * @param string|Closure|string[]|Closure[] $convert The converter
 		 * @return mixed The converted value
 		 */
-		protected function convertValue(?string $value, $convert) {
+		protected function convertValue($value, $convert) {
 
 			if (is_array($value)) {
 				foreach($value as &$curr) {
-					$curr = $this->convertValue($value, $convert);
+					$curr = $this->convertValue($curr, $convert);
 				}
 
 				return $value;
@@ -104,24 +104,21 @@
 
 		/**
 		 * Returns null if value is null, empty string or string only containing whitespaces
-		 * @param string|null $value The value
-		 * @return string|null The converted value
+		 * @param mixed $value The value
+		 * @return mixed The converted value
 		 */
-		protected function convertDefaultNull(?string $value) {
-			if (trim($value) === '')
-				return null;
-
-			return $value;
+		protected function convertDefaultNull($value) {
+			return $this->convertDefault($value);
 		}
 
 		/**
 		 * Returns the given default value if value is null, empty string or string only containing whitespaces
-		 * @param string $value The value
+		 * @param mixed $value The value
 		 * @param mixed|null $default The default value
-		 * @return string The converted value
+		 * @return mixed The converted value
 		 */
-		protected function convertDefault(?string $value, $default = null) {
-			if (trim($value) === '')
+		protected function convertDefault($value, $default = null) {
+			if (!is_object($value) && trim($value) === '' && $value !== false)
 				return $default;
 
 			return $value;
@@ -129,7 +126,7 @@
 
 		/**
 		 * Removes all whitespaces before and after text
-		 * @param string $value The value
+		 * @param string|null $value The value
 		 * @return string The converted value
 		 */
 		protected function convertTrim(?string $value) {
@@ -139,19 +136,25 @@
 
 		/**
 		 * Converts the text to uppercase
-		 * @param string $value The value
-		 * @return string The converted value
+		 * @param string|null $value The value
+		 * @return string|null The converted value
 		 */
-		protected function convertUpper(?string $value): string {
+		protected function convertUpper(?string $value): ?string {
+			if ($value === null)
+				return null;
+			
 			return mb_convert_case($value, MB_CASE_UPPER, $this->outputEncoding);
 		}
 
 		/**
 		 * Converts the text to lowercase
-		 * @param string $value The value
-		 * @return string The converted value
+		 * @param string|null $value The value
+		 * @return string|null The converted value
 		 */
-		protected function convertLower(?string $value): string {
+		protected function convertLower(?string $value): ?string {
+			if ($value === null)
+				return null;
+			
 			return mb_convert_case($value, MB_CASE_LOWER, $this->outputEncoding);
 		}
 
